@@ -7,13 +7,13 @@ const { website } = require('./website.js');
 
 
 
-const client = process.argv.indexOf("--headless") !== -1 ? client_constructor.getHeadlessClient() : client_constructor.getNormalClient();
+const client = process.argv.indexOf("headless") !== -1 ? client_constructor.getHeadlessClient() : client_constructor.getNormalClient();
 
 
 client.on('qr', qr => {
     console.log("No saved auth data found. Booting up webservice... ");
     var qrCodeWebsite = new website(qr);
-    qrcode.generate(qr, {small: true});
+    // qrcode.generate(qr, {small: true});
 });
 
 client.on('ready', () => {

@@ -1,7 +1,5 @@
 ﻿const express = require('express');
 const QRCode = require('qrcode');
-const {hostname} = require("os");
-
 class website {
     constructor(data) {
         this.data = data;
@@ -26,7 +24,11 @@ class website {
 
     startServer() {
         this.app.listen(this.port, () => {
-            console.log(`QR Code ready to scan on ${hostname()}:${this.port}`);
+            
+            //TODO how to acquire dockers container ip?
+            const containerIp = 'localhost';
+            const consoleLogString = `QR Code ready to scan on ${containerIp}:${this.port}`;
+            console.log(consoleLogString);
         });
     }
 }
