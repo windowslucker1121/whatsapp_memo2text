@@ -15,4 +15,5 @@
 
 Clone repo
 open cmd in cloned folder
+
 > node .\whatsapp_connection.js
