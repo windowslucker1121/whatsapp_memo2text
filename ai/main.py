@@ -15,7 +15,7 @@ SUMMARIZE_SYSTEM_PROMPT = """
 Du bist ein Assistent, der sehr kurze und prägnante Zusammenfassungen von Nachrichten erstellt.
 Die Zusammenfassungen sollen so kurz wie möglich sein und keine unwichtigen Details enthalten.
 Insbesondere sollten sie keine Grußformeln, Verabschiedungen, Glückwünsche, Grüße oder Vergleichbares enthalten.
-Die einzige Ausgabe soll die zusammengefasste Nachricht sein.
+Die einzige Ausgabe soll die zusammengefasste Nachricht in Stichpunkten sein.
 """
 
 logging.debug(f"OpenAI API key: {OPENAI_API_KEY}")
@@ -37,7 +37,7 @@ async def call_whisper(filename: str, data: bytes, mimetype: str):
                 data=form_data) as response:
             logging.debug(f"Whisper response: {response.status}, {await response.text()}")
             response.raise_for_status()
-            return await response.text()
+            return await response.json()
 
 
 async def call_chatgpt(system_prompt: str, prompt: str):
@@ -64,7 +64,7 @@ async def call_chatgpt(system_prompt: str, prompt: str):
                 json=json) as response:
             logging.debug(f"ChatGPT response: {response.status}, {await response.text()}")
             response.raise_for_status()
-            return await response.text()
+            return await response.json()
 
 
 @ app.route("/transcribe", methods=["POST"])
@@ -84,8 +84,12 @@ async def transcribe():
     logging.debug(
         f"Received file {filename} with type {mime_type} and {len(data)} bytes of data")
 
-    # TODO: Make our own response DTO
-    return await call_whisper(filename, data, mime_type)
+    result = await call_whisper(filename, data, mime_type)
+    transcription = result["text"]
+
+    return {
+        "transcription": transcription,
+    }
 
 
 @ app.route("/summarize", methods=["POST"])
@@ -95,4 +99,9 @@ async def summarize():
     json = request.get_json()
     text = json["text"]
 
-    return await call_chatgpt(SUMMARIZE_SYSTEM_PROMPT, text)
+    chatgpt_result = await call_chatgpt(SUMMARIZE_SYSTEM_PROMPT, text)
+    summary = chatgpt_result["choices"][0]["message"]["content"]
+
+    return {
+        "summary": summary
+    }
