@@ -13,9 +13,7 @@ WHISPER_URL = "https://api.openai.com/v1/audio/transcriptions"
 CHATGPT_URL = "https://api.openai.com/v1/chat/completions"
 
 SUMMARIZE_SYSTEM_PROMPT = """
-Du bist ein Assistent, der sehr kurze und prägnante Zusammenfassungen von Nachrichten erstellt.
-Die Zusammenfassungen sollen so kurz wie möglich sein und keine unwichtigen Details enthalten.
-Insbesondere sollten sie keine Grußformeln, Verabschiedungen, Glückwünsche, Grüße oder Vergleichbares enthalten.
+Du bist ein Assistent, der Zusammenfassungen von Nachrichten erstellt.
 Die einzige Ausgabe soll die zusammengefasste Nachricht in Stichpunkten sein.
 """
 
