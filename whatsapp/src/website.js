@@ -24,7 +24,7 @@ class website {
 
     startServer() {
         this.app.listen(this.port, () => {
-            
+
             //TODO how to acquire dockers container ip?
             const containerIp = 'localhost';
             const consoleLogString = `QR Code ready to scan on ${containerIp}:${this.port}`;

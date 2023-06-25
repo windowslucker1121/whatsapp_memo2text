@@ -1,11 +1,10 @@
 ﻿const { Client, LocalAuth } = require('whatsapp-web.js');
 class client_constructor {
-    static getHeadlessClient()
-    {
+    static getHeadlessClient() {
         console.log("Provided headless argument.")
         return new Client(
             {
-                authStrategy : new LocalAuth(
+                authStrategy: new LocalAuth(
                     {
                         clientId: "self"
                     }
@@ -16,13 +15,12 @@ class client_constructor {
             }
         );
     }
-    
-    static getNormalClient()
-    {
+
+    static getNormalClient() {
         console.log("Creating normal Client.")
         return new Client(
             {
-                authStrategy : new LocalAuth(
+                authStrategy: new LocalAuth(
                     {
                         clientId: "self"
                     }

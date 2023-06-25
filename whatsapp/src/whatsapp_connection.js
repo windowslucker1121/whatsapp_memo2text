@@ -22,27 +22,25 @@ client.on('ready', () => {
 
 client.on('message', async message => {
     const stringContactName = (await message.getContact()).pushname;
-    
-    if(message.hasMedia && message.type === MessageTypes.AUDIO) {
-        
+
+    if (message.hasMedia && message.type === MessageTypes.AUDIO) {
+
         console.log("Received audio message. Starting download...");
         const media = await message.downloadMedia();
-        if(media !== undefined )
-        {
+        if (media !== undefined) {
             console.log("MediaInformation: \n   filename: " + media.fileName +
                 "\ntype: " + media.mimetype +
                 "\nfilesize: " + media.filesize);
-                // "\ndata: " + media.data);
+            // "\ndata: " + media.data);
         }
         else
             console.log("ERROR: media is somehow corrupted/deleted.");
     }
-    else
-    {
+    else {
         const messageBody = message.body;
-        console.log (stringContactName + " : " + messageBody);
+        console.log(stringContactName + " : " + messageBody);
     }
 });
- 
+
 client.initialize();
- 
+
