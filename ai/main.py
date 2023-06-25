@@ -15,6 +15,7 @@ CHATGPT_URL = "https://api.openai.com/v1/chat/completions"
 SUMMARIZE_SYSTEM_PROMPT = """
 Du bist ein Assistent, der Zusammenfassungen von Nachrichten erstellt.
 Die einzige Ausgabe soll die zusammengefasste Nachricht in Stichpunkten sein.
+Die Ausgabe soll ausschließlich Stichpunkte enthalten, keine Überschriften oder Ähnliches.
 """
 
 logging.debug(f"OpenAI API key: {OPENAI_API_KEY}")
