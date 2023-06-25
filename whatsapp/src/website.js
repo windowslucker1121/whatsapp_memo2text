@@ -1,6 +1,7 @@
 ﻿const express = require('express');
 const QRCode = require('qrcode');
-class website {
+
+class Website {
     constructor(data) {
         this.data = data;
         this.app = express();
@@ -33,4 +34,4 @@ class website {
     }
 }
 
-module.exports = { website };
+module.exports = { Website };

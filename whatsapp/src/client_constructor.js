@@ -1,5 +1,6 @@
 ﻿const { Client, LocalAuth } = require('whatsapp-web.js');
-class client_constructor {
+
+class ClientConstructor {
     static getHeadlessClient() {
         console.log("Provided headless argument.")
         return new Client(
@@ -10,6 +11,7 @@ class client_constructor {
                     }
                 ),
                 puppeteer: {
+                    // TODO: Why does headless mean no sandbox?
                     args: ['--no-sandbox'],
                 }
             }
@@ -29,4 +31,5 @@ class client_constructor {
         );
     }
 }
-module.exports = { client_constructor };
+
+module.exports = { ClientConstructor };
