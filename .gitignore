@@ -24,6 +24,7 @@
 venv/
 __pycache__/
 .mypy_cache/
+**/.null-ls_*
 
 # AWS User-specific
 .idea/**/aws.xml
