@@ -3,6 +3,7 @@ import os
 
 from aiohttp import ClientSession, FormData
 from flask import Flask, abort, request
+from tools.transcode import transcode
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -83,6 +84,12 @@ async def transcribe():
 
     logging.debug(
         f"Received file {filename} with type {mime_type} and {len(data)} bytes of data")
+
+    if mime_type != "audio/mpeg":
+        data, filename = transcode(data, mime_type, "audio/mpeg")
+        mime_type = "audio/mpeg"
+        logging.debug(
+            f"Transcoded data to {filename} ({mime_type}) with {len(data)} bytes of data")
 
     result = await call_whisper(filename, data, mime_type)
     transcription = result["text"]
