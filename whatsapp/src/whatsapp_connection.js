@@ -33,24 +33,34 @@ client.on('message_create', async message => {
         message.reply("pong");
         return;
     } else if (message.body == "!summarize" || message.body == "!s") {
-        const quoted = await message.getQuotedMessage();
+        console.log(`Handling command message ${JSON.stringify(message)}`)
 
+        const quoted = await message.getQuotedMessage();
         if (!quoted) {
             message.reply("Summarize needs a quoted message...")
             return;
         }
 
-        if (quoted.hasMedia && quoted.type === MessageTypes.AUDIO) {
+        if (quoted.type === MessageTypes.AUDIO || quoted.type === MessageTypes.VOICE) {
             await handleVoiceMessage(quoted)
         }
-        else {
+        else if (quoted.type === MessageTypes.TEXT) {
             await handleTextMessage(quoted)
         }
+        else {
+            console.warn(`Cannot handle message type ${quoted.type}`)
+        }
+
     }
 })
 
 const handleVoiceMessage = async function(message) {
     console.log("Handling voice message...")
+
+    if (!message.hasMedia) {
+        console.error("Voice message does not have media, this is unexpected")
+        return;
+    }
 
     const media = await message.downloadMedia();
 
