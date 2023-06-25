@@ -23,6 +23,7 @@
 # Python
 venv/
 __pycache__/
+.mypy_cache/
 
 # AWS User-specific
 .idea/**/aws.xml
