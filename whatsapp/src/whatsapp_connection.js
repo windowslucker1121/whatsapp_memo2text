@@ -4,7 +4,7 @@ const qrcode = require('qrcode-terminal');
 const { ClientConstructor } = require('./client_constructor.js');
 const { MessageTypes } = require("whatsapp-web.js");
 const { Website } = require('./website.js');
-const { summarizeVoiceMessage } = require("./summarize.js")
+const { summarizeVoiceMessage, summarizeText } = require("./summarize.js")
 
 
 
@@ -24,39 +24,55 @@ client.on('ready', () => {
 
 // Emitted when a new message is created, which may include the current user's own messages.
 client.on('message_create', async message => {
-    const contactName = (await message.getContact()).pushname;
-    console.log(`Received a message_create event from ${contactName}`)
+    if (!message.fromMe) {
+        console.log("Ignoring message because it was not be us")
+        return;
+    }
 
     if (message.body == "!ping") {
         message.reply("pong");
         return;
-    }
+    } else if (message.body == "!summarize" || message.body == "!s") {
+        const quoted = await message.getQuotedMessage();
 
-    if (message.hasMedia && message.type === MessageTypes.AUDIO) {
-        console.log("Received audio message. Starting download...");
+        if (!quoted) {
+            message.reply("Summarize needs a quoted message...")
+            return;
+        }
 
-        const media = await message.downloadMedia();
-
-        if (media !== undefined) {
-            const logMessage = `Media information:\n  Filename: ${media.filename}\n  Type: ${media.mimetype}\n  Size: ${media.filesize}`;
-            console.log(logMessage);
-
-            const data_buffer = Buffer.from(media.data, 'base64')
-            const data_blob = new Blob([data_buffer])
-            const summary = await summarizeVoiceMessage(data_blob, media.mimetype)
-
-            console.log(`Summary: ${summary}`)
-            message.reply(`Zusammenfassung:\n\n${summary}`)
+        if (quoted.hasMedia && quoted.type === MessageTypes.AUDIO) {
+            await handleVoiceMessage(quoted)
         }
         else {
-            console.log("ERROR: media is somehow corrupted/deleted.");
+            await handleTextMessage(quoted)
         }
     }
-    else {
-        const messageBody = message.body;
-        console.log(contactName + ": " + messageBody);
-    }
 })
+
+const handleVoiceMessage = async function(message) {
+    console.log("Handling voice message...")
+
+    const media = await message.downloadMedia();
+
+    if (!media) {
+        console.error("Voice message could not be downloaded");
+        return;
+    }
+
+    const logMessage = `Media information:\n  Filename: ${media.filename}\n  Type: ${media.mimetype}\n  Size: ${media.filesize}`;
+    console.log(logMessage);
+
+    const data_buffer = Buffer.from(media.data, 'base64')
+    const data_blob = new Blob([data_buffer])
+    const summary = await summarizeVoiceMessage(data_blob, media.mimetype)
+    message.reply(`Zusammenfassung:\n\n${summary}`)
+}
+
+const handleTextMessage = async function(message) {
+    console.log("Handling text message...")
+    const summary = await summarizeText(message.body)
+    message.reply(`Zusammenfassung:\n\n${summary}`)
+}
 
 client.initialize();
 

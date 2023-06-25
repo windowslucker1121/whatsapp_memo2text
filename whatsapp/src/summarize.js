@@ -21,6 +21,20 @@ const summarizeVoiceMessage = async function(data, mimetype) {
     }
 }
 
+const summarizeText = async function(text) {
+    try {
+        const summary_response = await axios.post('http://127.0.0.1:5000/summarize', { text: text })
+        const summary = summary_response.data.summary
+        console.log(`Summary: ${summary}`)
+
+        return summary
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+module.exports = { summarizeVoiceMessage, summarizeText };
+
 const main = async function() {
     const fs = require('fs/promises');
     const data = await fs.readFile("/home/marcel/Temp/signal.ogg");
@@ -33,4 +47,3 @@ if (require.main === module) {
     main()
 }
 
-module.exports = { summarizeVoiceMessage };
