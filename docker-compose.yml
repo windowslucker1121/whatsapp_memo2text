@@ -1,0 +1,14 @@
+version: '3'
+services:
+  whatsapp_web_connection:
+    build:
+      context: ./whatsapp
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+  ai:
+    build:
+      context: ./ai
+      dockerfile: Dockerfile
+    environment:
+      - OPENAI_API_KEY=XX
