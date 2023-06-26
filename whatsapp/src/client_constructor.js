@@ -7,7 +7,8 @@ class ClientConstructor {
             {
                 authStrategy: new LocalAuth(
                     {
-                        clientId: "self"
+                        clientId: "self",
+                        dataPath: "/data",
                     }
                 ),
                 puppeteer: {

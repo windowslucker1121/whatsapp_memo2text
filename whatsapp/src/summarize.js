@@ -1,6 +1,7 @@
 const axios = require('axios').default
 
 const hostname = process.argv.indexOf("headless") ? 'ai' : '127.0.0.1';
+console.log(hostname)
 
 const summarizeVoiceMessage = async function(data, mimetype) {
     try {

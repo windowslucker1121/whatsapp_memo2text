@@ -69,7 +69,7 @@ async def call_chatgpt(system_prompt: str, prompt: str):
             return await response.json()
 
 
-@ app.route("/transcribe", methods=["POST"])
+@app.route("/transcribe", methods=["POST"])
 async def transcribe():
     logging.debug("Doing transcription")
 
@@ -100,7 +100,7 @@ async def transcribe():
     }
 
 
-@ app.route("/summarize", methods=["POST"])
+@app.route("/summarize", methods=["POST"])
 async def summarize():
     logging.debug("Summarizing")
 
