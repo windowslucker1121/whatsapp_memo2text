@@ -25,7 +25,25 @@ const summarizeVoiceMessage = async function(data, mimetype) {
     }
 }
 
-const summarizeText = async function(text) {
+const transcribeVoiceMessage = async function(data, mimetype){
+    try {
+        let formData = new FormData();
+        formData.append('file', data, {
+            type: mimetype
+        })
+
+
+        const transcription_response = await axios.post('http://' + hostname + ':5000/transcribe', formData)
+        const transcription = transcription_response.data.transcription
+        console.log(`Transcription: ${transcription}`)
+
+        return transcription
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+const summarizeTextMessage = async function(text) {
     try {
         const summary_response = await axios.post('http://' + hostname + ':5000/summarize', { text: text })
         const summary = summary_response.data.summary
@@ -37,7 +55,7 @@ const summarizeText = async function(text) {
     }
 }
 
-module.exports = { summarizeVoiceMessage, summarizeText };
+module.exports = { summarizeVoiceMessage, summarizeTextMessage, transcribeVoiceMessage };
 
 const main = async function() {
     const fs = require('fs/promises');

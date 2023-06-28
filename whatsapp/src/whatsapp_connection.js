@@ -5,7 +5,7 @@ const { ClientConstructor } = require('./client_constructor.js');
 const { MessageTypes } = require("whatsapp-web.js");
 const { fetchWebsiteText } = require('./website.js');
 const { checkForLinkInMessage } = require('./message.js');
-const { summarizeVoiceMessage, summarizeText } = require("./summarize.js")
+const { summarizeVoiceMessage, transcribeVoiceMessage ,summarizeTextMessage } = require("./summarize.js")
 
 
 
@@ -51,21 +51,64 @@ client.on('message_create', async message => {
             }
 
             if (quoted.type === MessageTypes.AUDIO || quoted.type === MessageTypes.VOICE) {
-                await handleVoiceMessage(quoted)
+                await summarizeVoice(quoted)
             }
             else if (quoted.type === MessageTypes.TEXT) {
                 
-                await handleTextMessage(quoted,params)
+                await summarizeText(quoted,params)
             }
             else {
                 console.warn(`Cannot handle message type ${quoted.type}`)
             }
         }
+        case "!t":
+        case "!summarize":
+        case "!summarise": {
+            console.log(`Handling command message ${JSON.stringify(message)} with given parameters: ` + params)
+
+            const quoted = await message.getQuotedMessage();
+            if (!quoted) {
+                message.reply("Summarize needs a quoted message...")
+                return;
+            }
+            if (quoted.type === MessageTypes.TEXT) {
+                message.reply("Transcribing a text message does not really make sense, does it?");
+                return;
+            }
+
+            if (quoted.type === MessageTypes.AUDIO || quoted.type === MessageTypes.VOICE) {
+                await transcribeVoice(quoted)
+            }
+        }
     }
 })
 
-const handleVoiceMessage = async function(message) {
-    console.log("Handling voice message...")
+const transcribeVoice = async function(message){
+    console.log("Transcribing voice message...")
+
+    if (!message.hasMedia) {
+        console.error("Voice message does not have media, this is unexpected")
+        return;
+    }
+
+    const media = await message.downloadMedia();
+
+    if (!media) {
+        console.error("Voice message could not be downloaded");
+        return;
+    }
+    const logMessage = `Media information:\n  Filename: ${media.filename}\n  Type: ${media.mimetype}\n  Size: ${media.filesize}`;
+    console.log(logMessage);
+
+    const data_buffer = Buffer.from(media.data, 'base64')
+    const data_blob = new Blob([data_buffer])
+    const transcription = await transcribeVoiceMessage(data_blob, media.mimetype)
+
+    message.reply(`Transcription: \n\n${transcription}`)
+}
+
+const summarizeVoice = async function(message) {
+    console.log("Summarizing voice message...")
 
     if (!message.hasMedia) {
         console.error("Voice message does not have media, this is unexpected")
@@ -88,8 +131,8 @@ const handleVoiceMessage = async function(message) {
     message.reply(`Summary:\n\n${summary}`)
 }
 
-const handleTextMessage = async function(message,parameter) {
-    console.log("Handling text message...")
+const summarizeText = async function(message,parameter) {
+    console.log("Summarizing text message...")
     let summarizeMessage = message.body;
     let forceParameter = !!(typeof parameter === 'object' && Array.isArray(parameter) && parameter.includes('f'));
     
@@ -101,7 +144,7 @@ const handleTextMessage = async function(message,parameter) {
         console.log ("Fetched body: \n" + bodyOfWebsite);
         // summarizeMessage = bodyOfWebsite;
     }
-    const summary = await summarizeText(summarizeMessage)
+    const summary = await summarizeTextMessage(summarizeMessage)
     message.reply(`Summary:\n\n${summary}`)
 }
 
