@@ -3,7 +3,8 @@ console.log("App is booting up")
 const qrcode = require('qrcode-terminal');
 const { ClientConstructor } = require('./client_constructor.js');
 const { MessageTypes } = require("whatsapp-web.js");
-const { Website } = require('./website.js');
+const { fetchWebsiteText } = require('./website.js');
+const { checkForLinkInMessage } = require('./message.js');
 const { summarizeVoiceMessage, summarizeText } = require("./summarize.js")
 
 
@@ -29,28 +30,37 @@ client.on('message_create', async message => {
         return;
     }
 
-    if (message.body == "!ping") {
-        message.reply("pong");
-        return;
-    } else if (message.body == "!summarize" || message.body == "!s") {
-        console.log(`Handling command message ${JSON.stringify(message)}`)
+    const [command, ...params] = message.body.split(' ');
 
-        const quoted = await message.getQuotedMessage();
-        if (!quoted) {
-            message.reply("Summarize needs a quoted message...")
+    switch (command) {
+        case "!p":
+        case "!ping":
+        {
+            await message.reply("pong");
             return;
         }
+        case "!summarize":
+        case "!s": {
+            
+            console.log(`Handling command message ${JSON.stringify(message)} with given parameters: ` + params)
 
-        if (quoted.type === MessageTypes.AUDIO || quoted.type === MessageTypes.VOICE) {
-            await handleVoiceMessage(quoted)
-        }
-        else if (quoted.type === MessageTypes.TEXT) {
-            await handleTextMessage(quoted)
-        }
-        else {
-            console.warn(`Cannot handle message type ${quoted.type}`)
-        }
+            const quoted = await message.getQuotedMessage();
+            if (!quoted) {
+                message.reply("Summarize needs a quoted message...")
+                return;
+            }
 
+            if (quoted.type === MessageTypes.AUDIO || quoted.type === MessageTypes.VOICE) {
+                await handleVoiceMessage(quoted)
+            }
+            else if (quoted.type === MessageTypes.TEXT) {
+                
+                await handleTextMessage(quoted,params)
+            }
+            else {
+                console.warn(`Cannot handle message type ${quoted.type}`)
+            }
+        }
     }
 })
 
@@ -75,13 +85,24 @@ const handleVoiceMessage = async function(message) {
     const data_buffer = Buffer.from(media.data, 'base64')
     const data_blob = new Blob([data_buffer])
     const summary = await summarizeVoiceMessage(data_blob, media.mimetype)
-    message.reply(`Zusammenfassung:\n\n${summary}`)
+    message.reply(`Summary:\n\n${summary}`)
 }
 
-const handleTextMessage = async function(message) {
+const handleTextMessage = async function(message,parameter) {
     console.log("Handling text message...")
-    const summary = await summarizeText(message.body)
-    message.reply(`Zusammenfassung:\n\n${summary}`)
+    let summarizeMessage = message.body;
+    let forceParameter = !!(typeof parameter === 'object' && Array.isArray(parameter) && parameter.includes('f'));
+    
+    let link = await checkForLinkInMessage(summarizeMessage, forceParameter);
+    if ( link != null)
+    {
+        console.log("Detected http(s) link which is not the main content of the message, scanning link...")
+        let bodyOfWebsite = await fetchWebsiteText(link)
+        console.log ("Fetched body: \n" + bodyOfWebsite);
+        // summarizeMessage = bodyOfWebsite;
+    }
+    const summary = await summarizeText(summarizeMessage)
+    message.reply(`Summary:\n\n${summary}`)
 }
 
 client.initialize();
