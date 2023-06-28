@@ -62,8 +62,7 @@ client.on('message_create', async message => {
             }
         }
         case "!t":
-        case "!summarize":
-        case "!summarise": {
+        case "!transcribe":{
             console.log(`Handling command message ${JSON.stringify(message)} with given parameters: ` + params)
 
             const quoted = await message.getQuotedMessage();
