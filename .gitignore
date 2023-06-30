@@ -218,3 +218,4 @@ dist
 .wwebjs_auth/
 .auth/
 .idea/
+ai/.vscode/launch.json

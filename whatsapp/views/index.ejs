@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+</head>
+<body>
+  <h1><%= title %></h1>
+  <p><%= description %></p>
+
+  <form action="/config" method="post">
+    <label for="title">Titel:</label><br>
+    <input type="text" id="title" name="title" value="<%= title %>"><br>
+    <label for="description">Beschreibung:</label><br>
+    <input type="text" id="description" name="description" value="<%= description %>"><br>
+    <input type="submit" value="save">
+  </form>
+</body>
+</html>
