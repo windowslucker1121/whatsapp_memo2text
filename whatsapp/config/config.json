@@ -1,0 +1,10 @@
+{
+  "option1": {
+    "value": "this is value 1",
+    "description": "description 1"
+  },
+  "option2": {
+    "value": "this is value 2",
+    "description": "description 2"
+  }
+}

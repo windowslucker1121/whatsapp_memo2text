@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Konfigurationsseite</title>
+  <style>
+    .config-item {
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Konfiguration</h1>
+  <div id="config-items"></div>
+  <button onclick="updateConfig()">Update</button>
+
+  <script>
+    function getConfig() {
+      fetch('http://localhost:3000/config')
+        .then(response => response.json())
+        .then(config => {
+          const configItemsDiv = document.getElementById('config-items');
+          configItemsDiv.innerHTML = '';
+
+          for (let key in config) {
+            const configItemDiv = document.createElement('div');
+            configItemDiv.classList.add('config-item');
+            
+            const label = document.createElement('label');
+            label.textContent = key;
+            configItemDiv.appendChild(label);
+            
+            const description = document.createElement('p');
+            description.textContent = config[key].description;
+            configItemDiv.appendChild(description);
+            
+            const input = document.createElement('input');
+            input.id = key;
+            input.value = config[key].value;
+            configItemDiv.appendChild(input);
+            
+            configItemsDiv.appendChild(configItemDiv);
+          }
+        });
+    }
+
+    function updateConfig() {
+      const configItemsDiv = document.getElementById('config-items');
+      const inputs = configItemsDiv.getElementsByTagName('input');
+      const newConfig = {};
+
+      for (let input of inputs) {
+        newConfig[input.id] = { value: input.value };
+      }
+
+      fetch('http://localhost:3000/config', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newConfig),
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('config saved:', data);
+        getConfig();
+      });
+    }
+
+    getConfig();
+  </script>
+</body>
+</html>
