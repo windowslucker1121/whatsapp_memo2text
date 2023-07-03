@@ -6,7 +6,7 @@ Dont waste time with long (audio) messages and summarize them using OpenAI.
 
 # Getting started
 1. Copy `docker-compose.yml` to your device. 
-2. Copy `secrets.env.example` to your device ,  rename it to `secrets.env` and pdate paste your OpenAI API Key.
+2. Copy `secrets.env.example` to your device ,  rename it to `secrets.env` and paste your OpenAI API Key.
 3. Run `docker compose up -d`
 4. Visit the container on port 3000 or check the container logs. You'll find a QR code that you have to scan.
 5. Open Whatsapp on your phone and scan the displayed QR code.
