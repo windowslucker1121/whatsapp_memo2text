@@ -26,7 +26,7 @@ jobs:
         with:
           push: true
           context: "{{defaultContext}}:whatsapp"
-          tags: audiotape/wa2t-whatsapp:latest
+          tags: windowslucker/wa2t-web:latest
   build-ai:
       runs-on: ubuntu-latest
       steps:
@@ -48,4 +48,4 @@ jobs:
           with:
             push: true
             context: "{{defaultContext}}:ai"
-            tags: audiotape/ai:latest
+            tags: windowslucker/wa2t-ai:latest
