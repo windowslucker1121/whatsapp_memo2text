@@ -26,4 +26,4 @@ jobs:
         with:
           push: true
           context: "{{defaultContext}}:whatsapp"
-          tags: Audiotape-2/wa2t-whatsapp:latest
+          tags: audiotape/wa2t-whatsapp:latest
