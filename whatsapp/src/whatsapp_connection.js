@@ -60,6 +60,7 @@ client.on('message_create', async message => {
             else {
                 console.warn(`Cannot handle message type ${quoted.type}`)
             }
+            return;
         }
         case "!t":
         case "!transcribe":{
@@ -144,7 +145,11 @@ const summarizeText = async function(message,parameter) {
         // summarizeMessage = bodyOfWebsite;
     }
     const summary = await summarizeTextMessage(summarizeMessage)
-    message.reply(`Summary:\n\n${summary}`)
+
+    if (summary === undefined)
+        message.reply('Bot encountered an error. Please check your logs.');
+    else
+        message.reply(`Summary:\n\n${summary}`)
 }
 
 client.initialize();
