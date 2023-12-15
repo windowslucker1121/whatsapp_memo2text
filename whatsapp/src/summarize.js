@@ -51,7 +51,7 @@ const summarizeTextMessage = async function(text) {
 
         return summary
     } catch (error) {
-        console.error(error);
+        console.error("Error occurred:" + error.toString())
     }
 }
 
