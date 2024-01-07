@@ -1,12 +1,11 @@
-FROM python:3.11-slim-buster
+FROM python:3.12
 
 WORKDIR /app
-
 COPY . /app
 
 RUN apt-get update && \
-    apt-get install -y ffmpeg && \
-    pip install --trusted-host pypi.python.org -r requirements.txt
+    apt-get install -y ffmpeg
+RUN pip install --trusted-host pypi.python.org -r requirements.txt
 
 EXPOSE 5000
 

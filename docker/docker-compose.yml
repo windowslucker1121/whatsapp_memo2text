@@ -1,12 +1,10 @@
 version: '3'
 services:
   whatsapp_web_connection:
-    image: windowslucker/wa2t-web:latest
-    ports:
-      - "3000:3000"
+    build: ../whatsapp
     volumes:
       - ~/.docker/whatsapp:/data
   ai:
-    image: windowslucker/wa2t-ai:latest
+    build: ../ai
     env_file:
       - secrets.env
