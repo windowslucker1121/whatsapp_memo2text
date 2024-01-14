@@ -35,17 +35,17 @@ class Website {
         });
     }
 }
-    async function fetchWebsiteText(link) {
-        try {
-            const response = await axios.get(link);
-            const html = response.data;
-            const $ = cheerio.load(html);
-            
-            return $('body').text();
-        } catch (error) {
-            console.error('Error while fetching website:', error);
-            return null;
-        }
-    
+async function fetchWebsiteText(link) {
+    try {
+        const response = await axios.get(link);
+        const html = response.data;
+        const $ = cheerio.load(html);
+
+        return $('body').text();
+    } catch (error) {
+        console.error('Error while fetching website:', error);
+        return null;
+    }
+
 }
 module.exports = { Website, fetchWebsiteText };

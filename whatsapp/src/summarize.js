@@ -25,7 +25,7 @@ const summarizeVoiceMessage = async function(data, mimetype) {
     }
 }
 
-const transcribeVoiceMessage = async function(data, mimetype){
+const transcribeVoiceMessage = async function(data, mimetype) {
     try {
         let formData = new FormData();
         formData.append('file', data, {

@@ -15,7 +15,7 @@ const client = process.argv.indexOf("headless") !== -1 ?
 
 
 client.on('qr', qr => {
-    console.log("No saved auth data found. Booting up webservice... ");
+    console.log("No saved auth data found. Booting up webservice...");
     qrcode.generate(qr, { small: true });
 });
 
@@ -41,7 +41,6 @@ client.on('message_create', async message => {
             }
         case "!summarize":
         case "!s": {
-
             console.log(`Handling command message ${JSON.stringify(message)} with given parameters: ` + params)
 
             const quoted = await message.getQuotedMessage();
