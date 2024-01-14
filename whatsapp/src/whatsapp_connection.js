@@ -5,7 +5,7 @@ const { ClientConstructor } = require('./client_constructor.js');
 const { MessageTypes } = require("whatsapp-web.js");
 const { fetchWebsiteText } = require('./website.js');
 const { checkForLinkInMessage } = require('./message.js');
-const { summarizeVoiceMessage, transcribeVoiceMessage ,summarizeTextMessage } = require("./summarize.js")
+const { summarizeVoiceMessage, transcribeVoiceMessage, summarizeTextMessage } = require("./summarize.js")
 
 
 
@@ -26,7 +26,7 @@ client.on('ready', () => {
 // Emitted when a new message is created, which may include the current user's own messages.
 client.on('message_create', async message => {
     if (!message.fromMe) {
-        console.log("Ignoring message because it was not be us")
+        console.log("Ignoring message because it was not by us")
         return;
     }
 
@@ -35,13 +35,13 @@ client.on('message_create', async message => {
     switch (command) {
         case "!p":
         case "!ping":
-        {
-            await message.reply("pong");
-            return;
-        }
+            {
+                await message.reply("pong");
+                return;
+            }
         case "!summarize":
         case "!s": {
-            
+
             console.log(`Handling command message ${JSON.stringify(message)} with given parameters: ` + params)
 
             const quoted = await message.getQuotedMessage();
@@ -54,8 +54,8 @@ client.on('message_create', async message => {
                 await summarizeVoice(quoted)
             }
             else if (quoted.type === MessageTypes.TEXT) {
-                
-                await summarizeText(quoted,params)
+
+                await summarizeText(quoted, params)
             }
             else {
                 console.warn(`Cannot handle message type ${quoted.type}`)
@@ -63,7 +63,7 @@ client.on('message_create', async message => {
             return;
         }
         case "!t":
-        case "!transcribe":{
+        case "!transcribe": {
             console.log(`Handling command message ${JSON.stringify(message)} with given parameters: ` + params)
 
             const quoted = await message.getQuotedMessage();
@@ -83,7 +83,7 @@ client.on('message_create', async message => {
     }
 })
 
-const transcribeVoice = async function(message){
+const transcribeVoice = async function(message) {
     console.log("Transcribing voice message...")
 
     if (!message.hasMedia) {
@@ -131,17 +131,16 @@ const summarizeVoice = async function(message) {
     message.reply(`Summary:\n\n${summary}`)
 }
 
-const summarizeText = async function(message,parameter) {
+const summarizeText = async function(message, parameter) {
     console.log("Summarizing text message...")
     let summarizeMessage = message.body;
     let forceParameter = !!(typeof parameter === 'object' && Array.isArray(parameter) && parameter.includes('f'));
-    
+
     let link = await checkForLinkInMessage(summarizeMessage, forceParameter);
-    if ( link != null)
-    {
+    if (link != null) {
         console.log("Detected http(s) link which is not the main content of the message, scanning link...")
         let bodyOfWebsite = await fetchWebsiteText(link)
-        console.log ("Fetched body: \n" + bodyOfWebsite);
+        console.log("Fetched body: \n" + bodyOfWebsite);
         // summarizeMessage = bodyOfWebsite;
     }
     const summary = await summarizeTextMessage(summarizeMessage)
